@@ -5,9 +5,6 @@ class CaixaDaLanchonete {
         this.cardapio = {cafe: 3.00, chantily: 1.50, suco: 6.20,
                          sanduiche: 6.50, queijo: 2.00, salgado: 7.25,
                          combo1: 9.50, combo2: 7.50,};
-
-        this.principais = {cafe: ["chantily"], sanduiche: ["queijo"],
-                                combo1: ["suco", "sanduiche"],combo2: ["cafe", "sanduiche"],};
     }
 
     calcularValorDaCompra(metodoDePagamento, itens) {
@@ -20,7 +17,6 @@ class CaixaDaLanchonete {
         }
 
         const pedido = {};
-        const extras = [];
 
         for (const item of itens) {
             const [codigo, quantidade] = item.split(',');
@@ -30,24 +26,18 @@ class CaixaDaLanchonete {
             }
 
             if (quantidade <=0) {
-                return "Quantidade inválida";
-            }
-
-            if (this.itensPrincipais[codigo]) {
-                pedido[codigo] = (pedido[codigo] || 0) + parseInt(quantidade);
-            } else if (this.Principais[`${codigo}extra`]) {
-                const principal = codigo + "extra";
-                
-                if (!pedido[principal]) {
-                    return "Item extra não pode ser pedido sem o principal";
-                }
-
-                extras.push(item);
-            } else {
-                return "Item inválido!";
+                return "Quantidade inválida!";
             }
 
             pedido[codigo] = (pedido[codigo] || 0) + parseInt(quantidade);
+           
+            if (pedido.chantily && !pedido.cafe) {
+                return "Item extra não pode ser pedido sem o principal";
+            }
+
+            if (pedido.queijo && !pedido.sanduiche) {
+                return "Item extra não pode ser pedido sem o principal";
+            }    
         }
 
         let total = 0;
@@ -65,6 +55,5 @@ class CaixaDaLanchonete {
         return `R$ ${total.toFixed(2).replace('.', ',')}`;
     }
 }
-
 
 export { CaixaDaLanchonete };
